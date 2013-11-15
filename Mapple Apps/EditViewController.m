@@ -42,6 +42,7 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
+    // Show the keyboard
     [self.titleTextField becomeFirstResponder];
 }
 

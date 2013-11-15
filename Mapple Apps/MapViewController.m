@@ -51,10 +51,15 @@
 
 - (IBAction)addPin:(UILongPressGestureRecognizer *)sender {
     
-    
-    if (sender.state == UIGestureRecognizerStateBegan) { // point out how this is a little weird
+    // Long press goes to UIGestureRecognizerStateBegan when the duration has expired, but the user hasn't let go yet.
+    // For most gesture recognizers you'll want to use UIGestureRecognizerStateRecognized.
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        
+        // Find the location of the long press and convert it to a map coordinate.
         CGPoint location = [sender locationOfTouch:0 inView:self.mapView];
         CLLocationCoordinate2D coordinate = [self.mapView convertPoint:location toCoordinateFromView:self.mapView];
+        
+        // Create an annotation from the coordinate and add it to the map.
         MKPointAnnotation *point = [[MKPointAnnotation alloc] init];
         point.coordinate = coordinate;
         point.title = @"Dropped Pin";
@@ -66,13 +71,16 @@
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation {
     
+    // We only take care of the view for point annotations, not other kinds (like the user location annotation).
     if ([annotation isKindOfClass:[MKPointAnnotation class]]) {
+        
         MKPinAnnotationView *pinView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"Pin"];
         pinView.pinColor = MKPinAnnotationColorPurple;
         pinView.animatesDrop = YES;
         pinView.canShowCallout = YES;
         [pinView setSelected:YES animated:YES];
         
+        // Create a button that will be used to edit the pin.
         UIButton *button = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         pinView.rightCalloutAccessoryView = button;
         
